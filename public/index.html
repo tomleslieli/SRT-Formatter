@@ -1,32 +1,104 @@
-function processSrt(content, exceptions) {
-  // Your SRT processing logic here
-  const exceptionsSet = new Set(exceptions.map(exception => exception.toLowerCase()));
-  const punctuationRegex = /[^\w\s'"?:]/g;
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SRT Processor</title>
+    <style>
+      textarea {
+        width: 100%;
+        height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SRT Processor</h1>
+    <input type="file" id="fileInput" accept=".srt" />
+    <br /><br />
+    <label for="exceptions">Exceptions (comma-separated):</label>
+    <textarea id="exceptions" placeholder="word1, word2, ..."></textarea>
+    <br /><br />
+    <button onclick="processFile()">Upload and Process</button>
+    <br /><br />
+    <div id="downloadLinkContainer"></div>
 
-  return content
-      .split("\n")
-      .map((line) => {
-          if (line.match(/^\d+$/) || line.includes("-->")) {
+    <script>
+      function processFile() {
+        const fileInput = document.getElementById("fileInput");
+        const exceptionsInput = document.getElementById("exceptions");
+        const file = fileInput.files[0];
+        const exceptions = exceptionsInput.value
+          .split(",")
+          .map((word) => word.trim());
+
+        if (!file) {
+          alert("Please select a file.");
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+          const content = event.target.result;
+          const processedContent = processSrt(content, exceptions);
+          generateDownloadLink(processedContent);
+        };
+
+        reader.readAsText(file);
+      }
+
+      function processSrt(content, exceptions) {
+        // Your SRT processing logic here
+        const exceptionsSet = new Set(
+          exceptions.map((exception) => exception.toLowerCase())
+        );
+        const punctuationRegex = /[^\w\s'"?:]/g;
+
+        return content
+          .split("\n")
+          .map((line) => {
+            if (line.match(/^\d+$/) || line.includes("-->")) {
               return line;
-          }
+            }
 
-          return line
+            return line
               .replace(/[^\w\s'"?:]/g, (char) => {
-                  return char === "'" ||
-                      char === "-" ||
-                      char === "?" ||
-                      char === ":" ||
-                      char === '"'
-                      ? char
-                      : "";
+                return char === "'" ||
+                  char === "-" ||
+                  char === "?" ||
+                  char === ":" ||
+                  char === '"'
+                  ? char
+                  : "";
               })
               .replace(/\b\w+\b/g, (word) => {
-                  const cleanWord = word.toLowerCase();
-                  if (exceptionsSet.has(cleanWord)) {
-                      return word;
-                  }
-                  return cleanWord;
+                const cleanWord = word.toLowerCase();
+                if (exceptionsSet.has(cleanWord)) {
+                  return word;
+                }
+                return cleanWord;
               });
-      })
-      .join("\n");
-}
+          })
+          .join("\n");
+      }
+
+      function generateDownloadLink(processedContent) {
+        // Create a Blob object containing the processed content
+        const blob = new Blob([processedContent], { type: "text/plain" });
+
+        // Generate a URL for the Blob object
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a download link
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "processed.srt";
+        a.textContent = "Download processed file";
+
+        // Append the download link to the container
+        const container = document.getElementById("downloadLinkContainer");
+        container.innerHTML = ""; // Clear previous content
+        container.appendChild(a);
+      }
+    </script>
+  </body>
+</html>
