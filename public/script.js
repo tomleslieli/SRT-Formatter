@@ -1,26 +1,22 @@
-document
-  .getElementById("uploadForm")
-  .addEventListener("submit", async function (event) {
-    event.preventDefault();
+document.getElementById("file").addEventListener("change", function (event) {
+  const file = event.target.files[0];
+  const reader = new FileReader();
 
-    const formData = new FormData(this);
+  reader.onload = function (event) {
+    const content = event.target.result;
+    const processedContent = processSrt(content, []); // Pass an empty array for exceptions since there's no backend to send exceptions to
 
-    const response = await fetch("/upload", {
-      method: "POST",
-      body: formData,
-    });
+    // Download the processed file
+    const blob = new Blob([processedContent], { type: "text/plain" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = "processed.srt";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
-    if (response.ok) {
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = "processed.srt";
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } else {
-      alert("File processing failed.");
-    }
-  });
+  reader.readAsText(file);
+});
