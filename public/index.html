@@ -19,7 +19,7 @@
     <br><br>
     <button onclick="processFile()">Upload and Process</button>
     <br><br>
-    <div id="processedContent"></div>
+    <div id="downloadLinkContainer"></div>
 
     <script>
         function processFile() {
@@ -38,7 +38,7 @@
             reader.onload = function(event) {
                 const content = event.target.result;
                 const processedContent = processSrt(content, exceptions);
-                displayProcessedContent(processedContent);
+                generateDownloadLink(processedContent);
             };
 
             reader.readAsText(file);
@@ -76,31 +76,3 @@
                 })
                 .join("\n");
         }
-
-        function displayProcessedContent(processedContent) {
-            // Display processed content on the page
-            document.getElementById('processedContent').innerText = processedContent;
-
-            // Create a Blob object containing the processed content
-            const blob = new Blob([processedContent], { type: 'text/plain' });
-
-            // Generate a URL for the Blob object
-            const url = window.URL.createObjectURL(blob);
-
-            // Create a download link
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'processed.srt';
-            a.textContent = 'Download processed file';
-            document.body.appendChild(a);
-
-            // Automatically click the download link
-            a.click();
-
-            // Cleanup
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }
-    </script>
-</body>
-</html>
