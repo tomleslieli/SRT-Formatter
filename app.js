@@ -58,7 +58,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 function processSrt(data, exceptions) {
   const exceptionsSet = new Set(exceptions);
   console.log("Exceptions Set:", exceptionsSet); // Log exceptions set
-  const punctuationRegex = /[^\w\s'-?]/g; // Include apostrophes, dashes, and question marks
+  const punctuationRegex = /[^\w\s'"?:]/g; // Include apostrophes, dashes, question marks, colons, and quotation marks
 
   return data
     .split("\n")
@@ -68,8 +68,14 @@ function processSrt(data, exceptions) {
       }
 
       return line
-        .replace(/[^\w\s'-?]/g, (char) => {
-          return char === "'" || char === "-" || char === "?" ? char : ""; // Keep apostrophes, dashes, and question marks, remove other punctuation
+        .replace(/[^\w\s'"?:]/g, (char) => {
+          return char === "'" ||
+            char === "-" ||
+            char === "?" ||
+            char === ":" ||
+            char === '"'
+            ? char
+            : ""; // Keep apostrophes, dashes, question marks, colons, and quotation marks, remove other punctuation
         })
         .replace(/\b\w+\b/g, (word) => {
           const cleanWord = word.toLowerCase();
