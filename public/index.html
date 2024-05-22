@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SRT Processor</title>
+    <style>
+      textarea {
+        width: 100%;
+        height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SRT Processor</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="file">Upload .srt file:</label>
+      <input
+        type="file"
+        id="file"
+        name="file"
+        accept=".srt"
+        required
+      /><br /><br />
+      <label for="exceptions">Exceptions (comma-separated):</label>
+      <textarea
+        id="exceptions"
+        name="exceptions"
+        placeholder="word1, word2, ..."
+      ></textarea
+      ><br /><br />
+      <button type="submit">Upload and Process</button>
+    </form>
+    <script src="script.js"></script>
+  </body>
+</html>
