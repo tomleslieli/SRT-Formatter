@@ -4,12 +4,22 @@
     <meta charset="UTF-8" />
     <title>SRT Processor</title>
     <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <h1>SRT Processor</h1>
+    <h6 class="tomleslieli">Made with love by Tom Leslie Li</h6>
+    <h5>Step 1: Upload SRT File</h5>
     <input type="file" id="fileInput" accept=".srt" />
     <br /><br />
-    <label for="exceptions">Exceptions (comma-separated):</label>
+    <h5 class="exceptions-text" for="exceptions"
+      >Step 2: Add Exceptions (comma-separated):</h5>
+    <h6>Exceptions are not case sensitive</h6>
     <textarea id="exceptions" placeholder="word1, word2, ..."></textarea>
     <br /><br />
     <button onclick="processFile()">Upload and Process</button>
@@ -87,7 +97,7 @@
         const a = document.createElement("a");
         a.href = url;
         a.download = "processed.srt";
-        a.textContent = "Download processed file";
+        a.textContent = "Download Processed File";
 
         // Append the download link to the container
         const container = document.getElementById("downloadLinkContainer");
