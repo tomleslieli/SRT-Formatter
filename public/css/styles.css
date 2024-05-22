@@ -12,7 +12,7 @@ input {
   color: #222222; /* Change to the desired text color */
   border: none; /* Remove borders */
   border-radius: 5px;
-  width: 1000px;
+  width: 98%;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -33,6 +33,7 @@ button {
   min-height: 30px;
   min-width: 150px;
   transition: transform 0.3s, background-color 0.3s ease, color 0.3s ease;
+  border: none;
 }
 
 button:hover {
@@ -59,4 +60,8 @@ textarea {
 .tomleslieli {
   margin-top: -20px;
   font-weight: 200;
+}
+
+.instructions {
+    font-weight: 100;
 }
