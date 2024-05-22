@@ -1,88 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8">
     <title>SRT Processor</title>
     <style>
-      textarea {
-        width: 100%;
-        height: 100px;
-      }
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <h1>SRT Processor</h1>
-    <input type="file" id="fileInput" accept=".srt" />
-    <br /><br />
+    <input type="file" id="fileInput" accept=".srt">
+    <br><br>
     <label for="exceptions">Exceptions (comma-separated):</label>
     <textarea id="exceptions" placeholder="word1, word2, ..."></textarea>
-    <br /><br />
+    <br><br>
     <button onclick="processFile()">Upload and Process</button>
-    <br /><br />
+    <br><br>
     <div id="processedContent"></div>
 
     <script>
-      function processFile() {
-        const fileInput = document.getElementById("fileInput");
-        const exceptionsInput = document.getElementById("exceptions");
-        const file = fileInput.files[0];
-        const exceptions = exceptionsInput.value
-          .split(",")
-          .map((word) => word.trim());
+        function processFile() {
+            const fileInput = document.getElementById('fileInput');
+            const exceptionsInput = document.getElementById('exceptions');
+            const file = fileInput.files[0];
+            const exceptions = exceptionsInput.value.split(',').map(word => word.trim());
 
-        if (!file) {
-          alert("Please select a file.");
-          return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-          const content = event.target.result;
-          const processedContent = processSrt(content, exceptions);
-          displayProcessedContent(processedContent);
-        };
-
-        reader.readAsText(file);
-      }
-
-      function processSrt(content, exceptions) {
-        // Your SRT processing logic here
-        const exceptionsSet = new Set(exceptions);
-        const punctuationRegex = /[^\w\s'"?:]/g;
-
-        return content
-          .split("\n")
-          .map((line) => {
-            if (line.match(/^\d+$/) || line.includes("-->")) {
-              return line;
+            if (!file) {
+                alert('Please select a file.');
+                return;
             }
 
-            return line
-              .replace(/[^\w\s'"?:]/g, (char) => {
-                return char === "'" ||
-                  char === "-" ||
-                  char === "?" ||
-                  char === ":" ||
-                  char === '"'
-                  ? char
-                  : "";
-              })
-              .replace(/\b\w+\b/g, (word) => {
-                const cleanWord = word.toLowerCase();
-                if (exceptionsSet.has(cleanWord)) {
-                  return word;
-                }
-                return cleanWord;
-              });
-          })
-          .join("\n");
-      }
+            const reader = new FileReader();
 
-      function displayProcessedContent(processedContent) {
-        document.getElementById("processedContent").innerText =
-          processedContent;
-      }
+            reader.onload = function(event) {
+                const content = event.target.result;
+                const processedContent = processSrt(content, exceptions);
+                displayProcessedContent(processedContent);
+            };
+
+            reader.readAsText(file);
+        }
+
+        function processSrt(content, exceptions) {
+            // Your SRT processing logic here
+            const exceptionsSet = new Set(exceptions);
+            const punctuationRegex = /[^\w\s'"?:]/g;
+
+            return content
+                .split("\n")
+                .map((line) => {
+                    if (line.match(/^\d+$/) || line.includes("-->")) {
+                        return line;
+                    }
+
+                    return line
+                        .replace(/[^\w\s'"?:]/g, (char) => {
+                            return char === "'" ||
+                                char === "-" ||
+                                char === "?" ||
+                                char === ":" ||
+                                char === '"'
+                                ? char
+                                : "";
+                        })
+                        .replace(/\b\w+\b/g, (word) => {
+                            const cleanWord = word.toLowerCase();
+                            if (exceptionsSet.has(cleanWord)) {
+                                return word;
+                            }
+                            return cleanWord;
+                        });
+                })
+                .join("\n");
+        }
+
+        function displayProcessedContent(processedContent) {
+            // Display processed content on the page
+            document.getElementById('processedContent').innerText = processedContent;
+
+            // Create a Blob object containing the processed content
+            const blob = new Blob([processedContent], { type: 'text/plain' });
+
+            // Generate a URL for the Blob object
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a download link
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'processed.srt';
+            a.textContent = 'Download processed file';
+            document.body.appendChild(a);
+
+            // Automatically click the download link
+            a.click();
+
+            // Cleanup
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
     </script>
-  </body>
+</body>
 </html>
